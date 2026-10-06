@@ -323,6 +323,17 @@
     return h;
   }
 
+  // Immagine dello spettacolo (facoltativa): DATA.images[id] = 'nomefile.jpg' in assets/img/events/
+  function imgHtml(ev) {
+    var f = DATA.images && DATA.images[ev.id];
+    if (!f) return '';
+    return '<img class="c-img" src="assets/img/events/' + esc(f) + '" alt="" loading="lazy" decoding="async">';
+  }
+  document.addEventListener('error', function (e) {
+    var el = e.target;
+    if (el && el.tagName === 'IMG' && el.classList.contains('c-img')) el.remove();
+  }, true);
+
   function cardHtml(o) {
     var ev = o.ev, fav = state.favs[o.key], open = !!state.open[o.key], id = idOf(o.key);
     var chips = '<span class="chip">' + esc(t('type_' + ev.type)) + '</span>';
@@ -332,7 +343,7 @@
     var ov = hasOverlap(o);
     return '<article class="card' + (fav ? ' is-fav' : '') + '" id="' + id + '" aria-labelledby="' + id + '-t">' +
       '<div class="c-time"><span class="c-t">' + esc(o.t) + '</span>' + (dur ? '<span class="c-d">' + esc(dur) + '</span>' : '') + '</div>' +
-      '<div class="c-main"><div class="chips">' + chips + '</div>' +
+      '<div class="c-main">' + imgHtml(ev) + '<div class="chips">' + chips + '</div>' +
       '<h3 id="' + id + '-t">' + esc(ev.title) + (ev.sub ? '<span class="c-sub"> – ' + esc(L(ev.sub)) + '</span>' : '') + '</h3>' +
       '<p class="c-by">' + esc(ev.by) + '</p>' +
       '<p class="c-where">' + ICONS.pin + ' ' + esc(venueShort(o.v)) + ' · ' + esc(cityName(DATA.venues[o.v].city)) + '</p>' +

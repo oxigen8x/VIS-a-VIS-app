@@ -274,3 +274,5 @@ a:hover .m-stop { fill: var(--red); }
 .kv dt { font-weight: 700; }
 .kv dd { margin: 0; }
 @media (max-width: 520px) { .kv { grid-template-columns: 1fr; gap: 0; } .kv dd { margin-bottom: 8px; } }
+
+.c-img { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; background: var(--line); margin: 0 0 10px; }

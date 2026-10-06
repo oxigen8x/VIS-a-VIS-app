@@ -27,6 +27,14 @@
     },
 
     /*
+     * IMMAGINI DEGLI SPETTACOLI (facoltative)
+     * Copiare i file (JPG/WebP, ~800 px di larghezza, peso < 150 KB) in assets/img/events/ e
+     * indicarli qui con l'id dell'evento, es.:  'capitolo-xv': 'capitolo-xv.jpg',
+     * Senza immagine la scheda resta com'è. Usare solo immagini di cui avete i diritti.
+     */
+    images: {},
+
+    /*
      * DATI PER L'INFORMATIVA PRIVACY (pagina #/privacy)
      * Lasciati VUOTI di proposito: finché sono vuoti la pagina mostra "[da inserire]" in evidenza.
      * Compilarli PRIMA di pubblicare e far validare il testo dal consulente privacy / DPO.
