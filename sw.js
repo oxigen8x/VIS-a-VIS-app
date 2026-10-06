@@ -1,10 +1,10 @@
 /* Service worker: rete prima (così gli aggiornamenti del programma arrivano subito),
    cache come riserva per l'uso offline. Incrementa CACHE se cambi la struttura dei file. */
-var CACHE = 'visavi-2026-v2';
+var CACHE = 'visavi-2026-v3';
 var SHELL = [
   './', 'index.html', 'manifest.webmanifest',
   'assets/fonts.css', 'assets/fonts/bebas-neue-latin-400-normal.woff2', 'assets/fonts/bebas-neue-latin-ext-400-normal.woff2', 'assets/fonts/inter-latin-400-normal.woff2', 'assets/fonts/inter-latin-500-normal.woff2', 'assets/fonts/inter-latin-600-normal.woff2', 'assets/fonts/inter-latin-700-normal.woff2', 'assets/style.css', 'assets/i18n.js', 'assets/data.js', 'assets/core.js', 'assets/app.js',
-  'assets/icons/icon-192.png', 'assets/icons/icon-512.png', 'assets/icons/apple-touch-icon.png'
+  'assets/img/visavi-logo.png', 'assets/img/artisti-associati.png', 'assets/icons/icon-192.png', 'assets/icons/icon-512.png', 'assets/icons/apple-touch-icon.png'
 ];
 
 self.addEventListener('install', function (e) {
