@@ -8,6 +8,7 @@
   var LEADS = [15, 30, 60, 120, 1440];
   var LOCALES = { it: 'it-IT', en: 'en-GB', sl: 'sl-SI' };
   var TABS = ['program', 'mine', 'shuttle', 'info'];
+  var ROUTES = TABS.concat(['privacy']);
 
   // ---------- storage (mai bloccante) ----------
   function sget(k, def) { try { var v = localStorage.getItem(k); return v == null ? def : JSON.parse(v); } catch (e) { return def; } }
@@ -15,7 +16,12 @@
 
   // ---------- tempo (con ?now=2026-10-14T19:00:00Z per provare gli avvisi) ----------
   var loadedAt = Date.now();
+  // La simulazione dell'ora funziona SOLO su host di test (GitHub Pages, localhost, file locale):
+  // sul sito di produzione il parametro viene ignorato.
+  var TEST_HOST = /(^|\.)github\.io$|^localhost$|^127\.0\.0\.1$|^\[::1\]$|^$/;
+  function isTestHost(h) { return TEST_HOST.test(h || ''); }
   var nowOverride = (function () {
+    if (!isTestHost(location.hostname)) return null;
     var m = /[?&]now=([^&]+)/.exec(location.search);
     var ms = m ? Date.parse(decodeURIComponent(m[1])) : NaN;
     return isNaN(ms) ? null : ms;
@@ -200,8 +206,9 @@
         ICONS['t_' + k] + '<span>' + esc(t('tab_' + k)) + '</span>' +
         (k === 'mine' && n ? '<b class="badge" aria-label="' + n + '">' + n + '</b>' : '') + '</a>';
     }).join('');
-    $('#top').innerHTML =
-      '<div class="top-in"><a class="brand" href="#/program" aria-label="Visavì"><span class="brand-v">Visavì</span><span class="brand-s">Gorizia Dance Festival</span></a>' +
+    var testbar = nowOverride == null ? '' : '<div class="testbar">TEST · ora simulata · ' + esc(new Date(nowOverride).toISOString().slice(0, 16).replace('T', ' ')) + ' UTC</div>';
+    $('#top').innerHTML = testbar +
+      '<div class="top-in"><a class="brand" href="#/program" aria-label="Visavì Gorizia Dance Festival"><img src="assets/img/visavi-logo.png" width="42" height="42" alt=""><span class="brand-s">Gorizia Dance Festival</span></a>' +
       '<nav class="tabs" aria-label="' + esc(t('tabs_label')) + '">' + tabs + '</nav>' +
       '<div class="langs" role="group" aria-label="' + esc(t('lang_label')) + '">' + langs + '</div></div>';
   }
@@ -214,9 +221,11 @@
 
   function footerHtml() {
     var d = new Intl.DateTimeFormat(LOCALES[state.lang], { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' }).format(ymd(DATA.updated));
-    return '<footer class="foot"><p class="foot-p">' + esc(t('footer_project')) + '</p>' +
+    return '<footer class="foot"><a class="foot-logo" href="https://www.artistiassociatigorizia.it/" target="_blank" rel="noopener"><span>' + esc(t('footer_by')) + '</span>' +
+      '<img src="assets/img/artisti-associati.png" width="620" height="94" alt="Artisti Associati"></a>' +
       '<p>' + esc(t('footer_updated', { date: d })) + '</p><p>' + esc(t('footer_disclaimer')) + '</p>' +
-      '<p><a href="' + DATA.site.base + '/' + state.lang + '/" target="_blank" rel="noopener">goriziadancefestival.it ' + ICONS.ext + '</a></p></footer>';
+      '<p class="foot-links"><a href="' + DATA.site.base + '/' + state.lang + '/" target="_blank" rel="noopener">goriziadancefestival.it ' + ICONS.ext + '</a>' +
+      '<a href="#/privacy">' + esc(t('privacy_link')) + '</a></p></footer>';
   }
 
   // ---------- render: hero ----------
@@ -483,10 +492,43 @@
     return h;
   }
 
+  // ---------- render: privacy ----------
+  function ph(v) { return v ? esc(v) : '<mark class="todo">' + esc(t('todo')) + '</mark>'; }
+  function viewPrivacy() {
+    var p = DATA.privacy || {};
+    var h = noticesHtml() + '<h1 class="page-h">' + esc(t('privacy_title')) + '</h1><p class="lead">' + esc(t('priv_intro')) + '</p>';
+    h += '<section class="panel prose"><h2>' + esc(t('priv_controller_h')) + '</h2><dl class="kv">' +
+      '<dt>' + esc(t('priv_controller_lbl')) + '</dt><dd>' + ph(p.controller) + '</dd>' +
+      '<dt>' + esc(t('priv_address_lbl')) + '</dt><dd>' + ph(p.address) + '</dd>' +
+      '<dt>' + esc(t('priv_email_lbl')) + '</dt><dd>' + (p.email ? '<a href="mailto:' + esc(p.email) + '">' + esc(p.email) + '</a>' : ph('')) + '</dd>' +
+      (p.dpo ? '<dt>' + esc(t('priv_dpo_lbl')) + '</dt><dd>' + esc(p.dpo) + '</dd>' : '') + '</dl></section>';
+    h += '<section class="panel prose"><h2>' + esc(t('priv_device_h')) + '</h2><p>' + esc(t('priv_device_p')) + '</p><ul>' +
+      [1, 2, 3, 4].map(function (i) { return '<li>' + esc(t('priv_i' + i)) + '</li>'; }).join('') + '</ul><p>' + esc(t('priv_device_p2')) + '</p></section>';
+    h += '<section class="panel prose"><h2>' + esc(t('priv_none_h')) + '</h2><p>' + esc(t('priv_none_p')) + '</p></section>';
+    h += '<section class="panel prose"><h2>' + esc(t('priv_hosting_h')) + '</h2><p>' + esc(t('priv_hosting_a')) + ph(p.hosting) + esc(t('priv_hosting_b')) + '</p></section>';
+    h += '<section class="panel prose"><h2>' + esc(t('priv_links_h')) + '</h2><p>' + esc(t('priv_links_p')) + '</p></section>';
+    h += '<section class="panel prose"><h2>' + esc(t('priv_rights_h')) + '</h2><p>' + esc(t('priv_rights_p')) + '</p>' +
+      (p.policyUrl ? '<p><a href="' + esc(p.policyUrl) + '" target="_blank" rel="noopener">' + esc(t('priv_policy')) + ' ' + ICONS.ext + '</a></p>' : '') +
+      '<p class="d-small">' + esc(t('priv_updated')) + ': ' + (p.updated ? esc(new Intl.DateTimeFormat(LOCALES[state.lang], { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' }).format(ymd(p.updated))) : ph('')) + '</p></section>';
+    h += '<section class="panel"><h2>' + esc(t('priv_clear_h')) + '</h2><p>' + esc(t('priv_clear_p')) + '</p><p class="d-facts">' +
+      esc(t('priv_count', { n: Object.keys(state.favs).length })) + '</p><button type="button" class="btn outline" data-action="clearData">' + esc(t('priv_clear_btn')) + '</button></section>';
+    return h + footerHtml();
+  }
+  function clearData() {
+    if (!window.confirm(t('priv_clear_confirm'))) return;
+    try {
+      Object.keys(localStorage).filter(function (k) { return k.indexOf('visavi.') === 0; })
+        .forEach(function (k) { localStorage.removeItem(k); });
+    } catch (e) { /* ignore */ }
+    state.favs = {}; state.settings = { lead: 60, notif: false }; state.dismissed = []; state.notified = {}; state.open = {};
+    renderTop(); renderView();
+    toast(esc(t('priv_cleared')), { ms: 3500 });
+  }
+
   // ---------- render: principale ----------
   function renderView() {
     var v = $('#view');
-    v.innerHTML = state.tab === 'mine' ? viewMine() : state.tab === 'shuttle' ? viewShuttle() : state.tab === 'info' ? viewInfo() : viewProgram();
+    v.innerHTML = state.tab === 'mine' ? viewMine() : state.tab === 'shuttle' ? viewShuttle() : state.tab === 'info' ? viewInfo() : state.tab === 'privacy' ? viewPrivacy() : viewProgram();
     if (state.tab === 'program') renderList();
   }
   function renderAll() {
@@ -497,7 +539,7 @@
   }
 
   function setTab(tab) {
-    if (TABS.indexOf(tab) < 0) tab = 'program';
+    if (ROUTES.indexOf(tab) < 0) tab = 'program';
     var changed = tab !== state.tab;
     state.tab = tab; renderAll();
     if (changed) window.scrollTo(0, 0);
@@ -543,6 +585,7 @@
     else if (a === 'lang') { state.lang = el.getAttribute('data-lang'); sset('visavi.lang', state.lang); renderAll(); }
     else if (a === 'dismiss') { state.dismissed.push(el.getAttribute('data-id')); sset('visavi.dismissed', state.dismissed); renderView(); }
     else if (a === 'notif') toggleNotif();
+    else if (a === 'clearData') clearData();
   }
   function onChange(e) {
     var el = e.target.closest('[data-action]'); if (!el) return;
@@ -581,7 +624,7 @@
     document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'visible') checkReminders(); });
     window.addEventListener('focus', checkReminders);
     state.tab = readHash();
-    if (TABS.indexOf(state.tab) < 0) state.tab = 'program';
+    if (ROUTES.indexOf(state.tab) < 0) state.tab = 'program';
     renderAll();
     checkReminders();
     setInterval(checkReminders, 20000);
@@ -590,6 +633,6 @@
     }
   }
 
-  window.VisaviApp = { state: state, OCC: OCC, t: t, checkReminders: checkReminders };
+  window.VisaviApp = { state: state, OCC: OCC, t: t, checkReminders: checkReminders, isTestHost: isTestHost };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
 })();

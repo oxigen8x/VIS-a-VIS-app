@@ -36,10 +36,9 @@ small { font-size: 12.5px; color: var(--muted); display: block; font-weight: 500
 /* ---------- header ---------- */
 .top { position: sticky; top: 0; z-index: 50; background: var(--bg); border-bottom: 1px solid var(--line); padding-top: env(safe-area-inset-top); }
 .top-in { max-width: var(--maxw); margin: 0 auto; height: var(--hdr); padding: 0 14px; display: flex; align-items: center; gap: 14px; }
-.brand { display: flex; align-items: baseline; gap: 8px; line-height: 1; margin-right: auto; white-space: nowrap; flex: none; }
-.brand-v { font: 400 34px/1 var(--f-head); color: var(--red); letter-spacing: .02em; text-transform: uppercase; }
+.brand { display: flex; align-items: center; gap: 10px; line-height: 1; margin-right: auto; white-space: nowrap; flex: none; }
 .brand-s { font: 400 15px/1 var(--f-head); text-transform: uppercase; letter-spacing: .08em; color: var(--ink); }
-@media (max-width: 440px) { .brand-s { display: none; } .top-in { gap: 8px; } }
+@media (max-width: 440px) { .top-in { gap: 8px; } .brand-s { font-size: 14px; } }
 .langs { display: flex; }
 .lang { font: 400 18px/1 var(--f-head); letter-spacing: .06em; padding: 8px 9px; border: 0; background: none; color: var(--ink); cursor: pointer; opacity: .55; }
 .lang.on { opacity: 1; color: var(--red); box-shadow: inset 0 -2px 0 var(--red); }
@@ -261,3 +260,17 @@ a:hover .m-stop { fill: var(--red); }
   .hero::after { width: 320px; height: 320px; right: -90px; top: -110px; }
   .pass { grid-template-columns: 1fr auto; align-items: center; }
 }
+
+/* ---------- loghi, privacy, barra di test ---------- */
+.brand img { display: block; width: 42px; height: 42px; }
+.testbar { background: #ffd24a; color: var(--ink); text-align: center; font: 700 12px/1 var(--f-body); letter-spacing: .06em; padding: 6px 8px; text-transform: uppercase; }
+.foot-logo { display: inline-flex; flex-direction: column; align-items: center; gap: 8px; margin-bottom: 14px; text-decoration: none; color: var(--muted); font: 400 18px/1 var(--f-head); letter-spacing: .1em; text-transform: uppercase; }
+.foot-logo img { height: 34px; width: auto; max-width: 100%; }
+.foot-links { display: flex; justify-content: center; flex-wrap: wrap; gap: 6px 22px; }
+.todo { background: #ffe58a; color: #5a3d00; padding: 1px 6px; font-weight: 700; }
+.prose p, .prose li { font-size: 14.5px; }
+.prose ul { padding-left: 20px; margin: 0 0 10px; }
+.kv { display: grid; grid-template-columns: max-content 1fr; gap: 6px 16px; margin: 0; }
+.kv dt { font-weight: 700; }
+.kv dd { margin: 0; }
+@media (max-width: 520px) { .kv { grid-template-columns: 1fr; gap: 0; } .kv dd { margin-bottom: 8px; } }

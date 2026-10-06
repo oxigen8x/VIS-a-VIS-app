@@ -27,6 +27,21 @@
     },
 
     /*
+     * DATI PER L'INFORMATIVA PRIVACY (pagina #/privacy)
+     * Lasciati VUOTI di proposito: finché sono vuoti la pagina mostra "[da inserire]" in evidenza.
+     * Compilarli PRIMA di pubblicare e far validare il testo dal consulente privacy / DPO.
+     */
+    privacy: {
+      controller: '',   // denominazione del titolare del trattamento
+      address: '',      // sede legale
+      email: '',        // contatto per la privacy
+      dpo: '',          // DPO / RPD, se designato (se vuoto la riga non compare)
+      hosting: '',      // chi ospita l'app (es. nome del fornitore di hosting)
+      updated: '',      // data dell'ultima revisione dell'informativa (es. '2026-10-10')
+      policyUrl: 'https://www.artistiassociatigorizia.it/privacy-policy/'  // informativa completa (link già presente sul sito)
+    },
+
+    /*
      * AVVISI / VARIAZIONI — compaiono in cima all'app finché non vengono chiusi dall'utente.
      * Esempio:
      * { id: 'v1', it: 'Lo spettacolo X inizia alle 21.15', en: 'Show X starts at 9.15 pm', sl: 'Predstava X se začne ob 21.15' }
